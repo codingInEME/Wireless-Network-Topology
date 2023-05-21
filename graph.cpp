@@ -52,7 +52,6 @@ public:
         for_each(vertices.begin(), vertices.end(), [&](node<T>& vertex) {
             if (vertex.name == name)
                 found = &vertex;
-
             }
         );
         return found;
