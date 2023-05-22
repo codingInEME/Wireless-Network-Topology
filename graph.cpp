@@ -193,4 +193,9 @@ public:
     {
         std::sort(vertices.begin(), vertices.end(), func);
     }
+
+    template <class key_type>
+    typename vector<node<T>>::iterator get_lowerBound(key_type key, bool (*func)(key_type, node<T>)) {
+        return std::lower_bound(vertices.begin(), vertices.end(), key, func);
+    }
 };

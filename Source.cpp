@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <iomanip>
 #include "point.cpp"
 #include "graph.cpp"
 
@@ -12,7 +13,7 @@ struct router
 
 	friend ostream& operator<<(ostream& os, router& r)
 	{
-		cout << r.name << "\t: " << '(' << r.location.getX() << "\t,      " << r.location.getY() << "\t";
+		cout << r.name << "\t: " << '(' << r.location.getX() << " \t,      " << r.location.getY() << ") \t";
 		return os;
 	}
 };
@@ -39,12 +40,19 @@ bool y_sort(node<T> n1, node<T> n2)
 	return r1.location.getY() < r2.location.getY();
 }
 
+template<class key_type, class T>
+bool low_val(key_type key, node<T> n){
+	router r = n.name;
+	return r.location.getX() < key;
+}
+
 class udg_generation
 {
 private:
-	int randrange(int low, int high)
+	double fRand(double fMin, double fMax)
 	{
-		return rand() % (high - low + 1) + low;
+		double f = static_cast<double>(rand()) / RAND_MAX;
+		return fMin + f * (fMax - fMin);
 	}
 public:
 	graph<router> generate(int router_count, int grid_size)
@@ -56,15 +64,18 @@ public:
 			router r;
 
 			r.name = to_string(i + 1);
-			r.location.setX(randrange(0, grid_size));
-			r.location.setY(randrange(0, grid_size));
+			r.location.setX(fRand(0, grid_size));
+			r.location.setY(fRand(0, grid_size));
 
 			network.insert_vertex(r);
 		}
 		network.sort_(x_sort);
 
 		cout << "X-Sorted:\n";
+		cout << fixed << setprecision(2);
 		network.display();
+
+		vector<node<router>>::iterator iter = network.get_lowerBound(3, low_val);
 
 		return network;
 	}
