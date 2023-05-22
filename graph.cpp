@@ -13,7 +13,7 @@ struct node {
     T name;
     list<T> adj_vertices;
 
-    bool operator<(node<T> n)
+    bool operator<(const node<T>& n) const
     {
         return name < n.name;
     }
@@ -60,7 +60,7 @@ public:
     bool edge_exist(T vertex1, T vertex2) {
         if (node<T>* obj = find_vertex(vertex1))
         {
-            list<T>::template iterator location = find(obj->adj_vertices.begin(), obj->adj_vertices.end(), vertex2);
+            typename list<T>::template iterator location = find(obj->adj_vertices.begin(), obj->adj_vertices.end(), vertex2);
 
             return location == obj->adj_vertices.end() ? false : true;
         }
@@ -195,7 +195,18 @@ public:
     }
 
     template <class key_type>
-    typename vector<node<T>>::iterator get_lowerBound(key_type key, bool (*func)(key_type, node<T>)) {
-        return std::lower_bound(vertices.begin(), vertices.end(), key, func);
+    typename vector<node<T>>::iterator get_lower_bound(key_type key, key_type (*attribute)(const node<T>&)) {
+        return std::lower_bound(vertices.begin(), vertices.end(), key, 
+            [&](node<T> obj, key_type k){
+                return attribute(obj) < k;
+        });
+    }
+
+    template <class key_type>
+    typename vector<node<T>>::iterator get_upper_bound(key_type key, key_type(*attribute)(const node<T>&)) {
+        return std::upper_bound(vertices.begin(), vertices.end(), key,
+            [&](node<T> obj, key_type k) {
+                return attribute(obj) < k;
+            });
     }
 };

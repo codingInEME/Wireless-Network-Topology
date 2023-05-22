@@ -40,10 +40,14 @@ bool y_sort(node<T> n1, node<T> n2)
 	return r1.location.getY() < r2.location.getY();
 }
 
-template<class key_type, class T>
-bool low_val(key_type key, node<T> n){
-	router r = n.name;
-	return r.location.getX() < key;
+double get_attr_x(const node<router>& n)
+{
+	return n.name.location.getX();
+}
+
+double get_attr_y(const node<router>& n)
+{
+	return n.name.location.getY();
 }
 
 class udg_generation
@@ -75,7 +79,11 @@ public:
 		cout << fixed << setprecision(2);
 		network.display();
 
-		vector<node<router>>::iterator iter = network.get_lowerBound(3, low_val);
+		vector<node<router>>::iterator iter_l = network.get_lower_bound(4.6, get_attr_x);
+		cout << "lower_bound: " << iter_l->name.name << '\n';
+
+		vector<node<router>>::iterator iter_u = network.get_upper_bound(4.6, get_attr_x);
+		cout << "upper_bound: " << iter_u->name.name << '\n';
 
 		return network;
 	}
