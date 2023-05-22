@@ -10,12 +10,12 @@ using namespace std;
 
 template <class T>
 struct node {
-    T name;
+    T value;
     list<T> adj_vertices;
 
     bool operator<(const node<T>& n) const
     {
-        return name < n.name;
+        return value < n.value;
     }
 };
 
@@ -50,7 +50,7 @@ public:
         node<T>* found = nullptr;
 
         for_each(vertices.begin(), vertices.end(), [&](node<T>& vertex) {
-            if (vertex.name == name)
+            if (vertex.value == name)
                 found = &vertex;
             }
         );
@@ -69,7 +69,7 @@ public:
 
     void insert_vertex(T name) {
         node<T> v;
-        v.name = name;
+        v.value = name;
         vertices.push_back(v);
     }
 
@@ -87,8 +87,8 @@ public:
     void delete_vertex(T name)
     {
         vertices.erase(remove_if(vertices.begin(), vertices.end(), [&](node<T>& vertex) {
-            vertex.adj_vertices.remove(name); // removing the vertex name from adjacency list of every vertex
-            return vertex.name == name; // if vertex is found then it is erased from vector
+            vertex.adj_vertices.remove(name); // removing the vertex value from adjacency list of every vertex
+            return vertex.value == name; // if vertex is found then it is erased from vector
             }
         ), vertices.end());
     }
@@ -174,7 +174,7 @@ public:
     {
         for (auto vertex : vertices)
         {
-            cout << vertex.name;
+            cout << vertex.value;
             cout << " : { ";
             for (auto edge : vertex.adj_vertices)
             {
@@ -186,7 +186,7 @@ public:
 
     void sort_()
     {
-        std::sort(vertices.begin, vertices.end, [&](node<T> node_1, node<T> node_2) {return node_1.name < node_2.name;});
+        std::sort(vertices.begin, vertices.end, [&](node<T> node_1, node<T> node_2) {return node_1.value < node_2.value;});
     }
 
     void sort_(bool (*func)(node<T>, node<T>))

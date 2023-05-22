@@ -21,7 +21,7 @@ struct router
 template<class T>
 bool distance_sort(node<T> n1, node<T> n2)
 {
-	router r1 = n1.name, r2 = n2.name;
+	router r1 = n1.value, r2 = n2.value;
 	point const origin(0, 0);
 	return r1.location.distance(origin) < r2.location.distance(origin);
 }
@@ -29,25 +29,25 @@ bool distance_sort(node<T> n1, node<T> n2)
 template<class T>
 bool x_sort(node<T> n1, node<T> n2)
 {
-	router r1 = n1.name, r2 = n2.name;
+	router r1 = n1.value, r2 = n2.value;
 	return r1.location.getX() < r2.location.getX();
 }
 
 template<class T>
 bool y_sort(node<T> n1, node<T> n2)
 {
-	router r1 = n1.name, r2 = n2.name;
+	router r1 = n1.value, r2 = n2.value;
 	return r1.location.getY() < r2.location.getY();
 }
 
 double get_attr_x(const node<router>& n)
 {
-	return n.name.location.getX();
+	return n.value.location.getX();
 }
 
 double get_attr_y(const node<router>& n)
 {
-	return n.name.location.getY();
+	return n.value.location.getY();
 }
 
 class udg_generation
@@ -80,10 +80,10 @@ public:
 		network.display();
 
 		vector<node<router>>::iterator iter_l = network.get_lower_bound(4.6, get_attr_x);
-		cout << "lower_bound: " << iter_l->name.name << '\n';
+		cout << "lower_bound: " << iter_l->value.name << '\n';
 
-		vector<node<router>>::iterator iter_u = network.get_upper_bound(4.6, get_attr_x);
-		cout << "upper_bound: " << iter_u->name.name << '\n';
+		/*vector<node<router>>::iterator iter_u = network.get_upper_bound(4.6, get_attr_x);
+		cout << "upper_bound: " << iter_u->value.name << '\n';*/
 
 		return network;
 	}
