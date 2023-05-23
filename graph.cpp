@@ -59,7 +59,7 @@ public:
 
         for_each(vertices.begin(), vertices.end(), [&](node<T>& vertex) {
             if (vertex.value == name)
-            found = &vertex;
+				found = &vertex;
             }
         );
         return found;
@@ -93,13 +93,14 @@ public:
         vertices.push_back(v);
     }
 
-    void edge_insert(T vertex1, T vertex2) {
+    void insert_edge(T vertex1, T vertex2) {
+        
         node<T>* obj1 = find_vertex(vertex1), * obj2 = find_vertex(vertex2);
 
         if (obj1 != nullptr && obj2 != nullptr && !edge_exist(vertex1, vertex2)) {
             obj1->adj_vertices.push_back(vertex2);
 
-            if (!directed)
+            if (!directed && vertex1 != vertex2)
                 obj2->adj_vertices.push_back(vertex1);
         }
     }
@@ -194,11 +195,11 @@ public:
     {
         for (auto vertex : vertices)
         {
-            cout << vertex.value;
+            cout << vertex.value << " : (" << vertex.value.location.getX() << ", " << vertex.value.location.getY() << ")";
             cout << " : { ";
-            for (auto edge : vertex.adj_vertices)
+            for (auto adjacent_vertex : vertex.adj_vertices)
             {
-                cout << edge << ' ';
+                cout << adjacent_vertex << ' ';
             }
             cout << "}\n";
         }
@@ -227,7 +228,7 @@ public:
 
         while (iter < vertices.end()) {
             if (attribute(*iter) > key)
-                return prev;
+                return iter;
             prev = iter;
             iter++;
         }

@@ -54,7 +54,7 @@ public:
         return point((x + p.x) / 2, (y + p.y) / 2);
     }
 
-    bool isEqualTo(point p) { // checks equality for both x and y of two points
+    bool isEqualTo(point p) const { // checks equality for both x and y of two points
         return x == p.x && y == p.y;
     }
 
@@ -64,5 +64,15 @@ public:
         // if x1^2 + y1^2 > x2^2 + y2^2 then it means distFromOrigin(p1) > distFromOrigin(p2)
         // which means sqrt is not necessary to implement
         return ((x * x) + (y * y)) > ((p.x * p.x) + (p.y * p.y));
+    }
+
+    bool operator==(const point& p) const
+    {
+        return isEqualTo(p);
+    }
+
+    bool operator!=(const point& p) const
+    {
+        return !isEqualTo(p);
     }
 };

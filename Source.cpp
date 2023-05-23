@@ -10,11 +10,23 @@ struct router
 {
 	string name;
 	point location;
+	double range = 1;
 
 	friend ostream &operator<<(ostream &os, router &r)
 	{
-		cout << r.name << "\t: " << '(' << r.location.getX() << " \t,      " << r.location.getY() << ") \t";
+		cout << r.name;
+		//<< "\t: " << '(' << r.location.getX() << " \t,      " << r.location.getY() << ") \t";
 		return os;
+	}
+
+	bool operator==(const router& r) const
+	{
+		return name == r.name;
+	}
+
+	bool operator!=(const router& r) const
+	{
+		return name != r.name;
 	}
 };
 
@@ -50,9 +62,11 @@ double get_attr_y(const node<router> &n)
 	return n.value.location.getY();
 }
 
-bool inside_circle(point center, double radius, point p)
+bool inside_range(router center, router p)
 {
-	return false;
+	/*double a = pow(p.location.getX() - center.location.getX(), 2) + pow(p.location.getY() - center.location.getY(), 2);
+	return a <= 1;*/
+	return true;
 }
 
 class udg_generation
@@ -87,19 +101,21 @@ public:
 		network.display();
 
 		cout << "network.begin(): " << network.begin()->value.name << "\n";
-		cout << "network.end(): " << network.end()->value.name << "\n";
+		cout << "network.end() " << network.end()->value.name << "\n";
 
-		/*for (auto node = network.begin(); node < network.end(); node++) {
-			vector<node<router>>::iterator iter_l = network.get_lower_bound(4.8, get_attr_x);
+		for (auto node = network.begin(); node < network.end(); node++) {
+			auto iter_l = network.get_lower_bound(node->value.location.getX() - node->value.range, get_attr_x);
 			cout << "lower_bound: " << iter_l->value.name << '\n';
 
-			vector<node<router>>::iterator iter_u = network.get_upper_bound(4.58, get_attr_x);
+			auto iter_u = network.get_upper_bound(node->value.location.getX() + node->value.range, get_attr_x);
 			cout << "upper_bound: " << iter_u->value.name << '\n';
 
-			for (auto i = iter_l; i < iter_u; i++) {
-				inside_circle();
+			for (auto i = iter_l; i < iter_u; ++i) {
+				if (node != i && inside_range(node->value, i->value)) // node != i avoids current router's connection to itself
+					network.insert_edge(node->value, iter_l->value);
 			}
-		}*/
+		}
+		network.display();
 		return network;
 	}
 };
