@@ -264,11 +264,6 @@ public:
     template <class key_type>
     typename vector<node<T>>::iterator get_upper_bound(key_type key, key_type (*attribute)(const node<T> &))
     {
-        /*return std::upper_bound(vertices.begin(), vertices.end(), key,
-            [&](node<T> obj, key_type k) {
-                return attribute(obj) < k;
-            });*/
-
         typename vector<node<T>>::iterator iter = vertices.begin();
         while (iter < vertices.end())
         {

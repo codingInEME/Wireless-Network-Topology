@@ -12,19 +12,19 @@ struct router
 	point location;
 	double range = 140;
 
-	friend ostream& operator<<(ostream& os, router& r)
+	friend ostream &operator<<(ostream &os, router &r)
 	{
 		cout << r.name;
 		//<< "\t: " << '(' << r.location.getX() << " \t,      " << r.location.getY() << ") \t";
 		return os;
 	}
 
-	bool operator==(const router& r) const
+	bool operator==(const router &r) const
 	{
 		return name == r.name;
 	}
 
-	bool operator!=(const router& r) const
+	bool operator!=(const router &r) const
 	{
 		return !(name == r.name);
 	}
@@ -52,12 +52,12 @@ bool y_sort(node<T> n1, node<T> n2)
 	return r1.location.getY() < r2.location.getY();
 }
 
-double get_attr_x(const node<router>& n)
+double get_attr_x(const node<router> &n)
 {
 	return n.value.location.getX();
 }
 
-double get_attr_y(const node<router>& n)
+double get_attr_y(const node<router> &n)
 {
 	return n.value.location.getY();
 }
@@ -102,7 +102,8 @@ public:
 		cout << "network.begin(): " << network.begin()->value.name << "\n";
 		cout << "network.end() " << network.end()->value.name << "\n";
 
-		for (auto node = network.begin(); node < network.end(); node++) {
+		for (auto node = network.begin(); node < network.end(); node++)
+		{
 			auto iter_l = network.get_lower_bound(node->value.location.getX() - sqrt(node->value.range), get_attr_x);
 			cout << "lower_bound: " << iter_l->value.name << '\n';
 
@@ -112,7 +113,8 @@ public:
 			else
 				cout << "upper_bound: " << (--iter_u)->value.name << '\n';
 
-			for (auto i = iter_l; i < iter_u; ++i) {
+			for (auto i = iter_l; i < iter_u; ++i)
+			{
 				if (node != i && inside_range(node->value, i->value)) // node != i avoids current router's connection to itself
 					network.insert_edge(node->value, i->value);
 			}
