@@ -9,66 +9,83 @@
 using namespace std;
 
 template <class T>
-struct node {
+struct node
+{
     T value;
     list<T> adj_vertices;
 
-    bool operator<(const node<T>& n) const
+    bool operator<(const node<T> &n) const
     {
         return value < n.value;
+    }
+
+    bool operator==(const node<T> &n) const
+    {
+        return value == n.value;
+    }
+
+    bool operator!=(const node<T> &n) const
+    {
+        return !(value == n.value);
     }
 };
 
 template <class T>
-class graph {
+class graph
+{
 private:
     bool directed;
     vector<node<T>> vertices;
 
 public:
     graph(bool directed) : directed(directed) {}
-    void destroy() {
+    void destroy()
+    {
         vertices.clear();
     }
 
-    int vertex_count() {
+    int vertex_count()
+    {
         return vertices.size();
     }
 
-    int edges_count() {
+    int edges_count()
+    {
         int total = 0;
 
-        for_each(vertices.begin(), vertices.end(), [&](node<T>& vertex) {
-            total += vertex.adj_vertices.size();
-            }
-        );
+        for_each(vertices.begin(), vertices.end(), [&](node<T> &vertex)
+                 { total += vertex.adj_vertices.size(); });
 
         return directed ? total : total / 2;
     }
 
-    typename vector<node<T>>::iterator begin() {
+    typename vector<node<T>>::iterator begin()
+    {
         return find_vertex(0);
     }
 
-    typename vector<node<T>>::iterator end() {
+    typename vector<node<T>>::iterator end()
+    {
         return find_vertex(vertex_count() - 1);
     }
 
-    node<T>* find_vertex(T name) {
-        node<T>* found = nullptr;
+    node<T> *find_vertex(T name)
+    {
+        node<T> *found = nullptr;
 
-        for_each(vertices.begin(), vertices.end(), [&](node<T>& vertex) {
+        for_each(vertices.begin(), vertices.end(), [&](node<T> &vertex)
+                 {
             if (vertex.value == name)
-				found = &vertex;
-            }
-        );
+                found = &vertex; });
         return found;
     }
 
-    typename vector<node<T>>::iterator find_vertex(int index) {
+    typename vector<node<T>>::iterator find_vertex(int index)
+    {
         typename vector<node<T>>::iterator iter = vertices.begin();
 
-        for (int i = 0; i < index; i++) {
+        for (int i = 0; i < index; i++)
+        {
             if (iter == vertices.end())
                 break;
             iter++;
@@ -77,8 +94,9 @@ public:
         return iter;
     }
 
-    bool edge_exist(T vertex1, T vertex2) {
-        if (node<T>* obj = find_vertex(vertex1))
+    bool edge_exist(T vertex1, T vertex2)
+    {
+        if (node<T> *obj = find_vertex(vertex1))
         {
             typename list<T>::template iterator location = find(obj->adj_vertices.begin(), obj->adj_vertices.end(), vertex2);
 
@@ -87,17 +105,20 @@ public:
         return false;
     }
 
-    void insert_vertex(T name) {
+    void insert_vertex(T name)
+    {
         node<T> v;
         v.value = name;
         vertices.push_back(v);
     }
 
-    void insert_edge(T vertex1, T vertex2) {
-        
-        node<T>* obj1 = find_vertex(vertex1), * obj2 = find_vertex(vertex2);
+    void insert_edge(T vertex1, T vertex2)
+    {
 
-        if (obj1 != nullptr && obj2 != nullptr && !edge_exist(vertex1, vertex2)) {
+        node<T> *obj1 = find_vertex(vertex1), *obj2 = find_vertex(vertex2);
+
+        if (obj1 != nullptr && obj2 != nullptr && !edge_exist(vertex1, vertex2))
+        {
             obj1->adj_vertices.push_back(vertex2);
 
             if (!directed && vertex1 != vertex2)
@@ -107,11 +128,12 @@ public:
 
     void delete_vertex(T name)
     {
-        vertices.erase(remove_if(vertices.begin(), vertices.end(), [&](node<T>& vertex) {
-            vertex.adj_vertices.remove(name); // removing the vertex value from adjacency list of every vertex
-        return vertex.value == name; // if vertex is found then it is erased from vector
-            }
-        ), vertices.end());
+        vertices.erase(remove_if(vertices.begin(), vertices.end(), [&](node<T> &vertex)
+                                 {
+                                     vertex.adj_vertices.remove(name); // removing the vertex value from adjacency list of every vertex
+                                     return vertex.value == name;      // if vertex is found then it is erased from vector
+                                 }),
+                       vertices.end());
     }
 
     void delete_edge(T vertex1, T vertex2)
@@ -119,7 +141,7 @@ public:
         if (!edge_exist(vertex1, vertex2))
             return;
 
-        node<T>* obj1 = find_vertex(vertex1), * obj2 = find_vertex(vertex2);
+        node<T> *obj1 = find_vertex(vertex1), *obj2 = find_vertex(vertex2);
 
         obj1->adj_vertices.remove(vertex2);
 
@@ -130,7 +152,6 @@ public:
 
             obj2->adj_vertices.remove(vertex1);
         }
-
     }
 
     void bfs(T start)
@@ -142,11 +163,12 @@ public:
         unordered_map<T, bool> visited;
         q.push(start);
         visited[start] = true;
-        while (!q.empty()) {
+        while (!q.empty())
+        {
             T curr = q.front();
             cout << curr << ' ';
             q.pop();
-            node<T>* vertex = find_vertex(curr);
+            node<T> *vertex = find_vertex(curr);
 
             for (auto adj_vert : vertex->adj_vertices)
             {
@@ -169,11 +191,12 @@ public:
         unordered_map<T, bool> visited;
         s.push(start);
         visited[start] = true;
-        while (!s.empty()) {
+        while (!s.empty())
+        {
             T curr = s.top();
             cout << curr << ' ';
             s.pop();
-            node<T>* vertex = find_vertex(curr);
+            node<T> *vertex = find_vertex(curr);
 
             for (auto adj_vert : vertex->adj_vertices)
             {
@@ -187,7 +210,8 @@ public:
         cout << '\n';
     }
 
-    bool isEmpty() {
+    bool isEmpty()
+    {
         return vertices.empty();
     }
 
@@ -207,7 +231,8 @@ public:
 
     void sort_()
     {
-        std::sort(vertices.begin, vertices.end, [&](node<T> node_1, node<T> node_2) {return node_1.value < node_2.value; });
+        std::sort(vertices.begin, vertices.end, [&](node<T> node_1, node<T> node_2)
+                  { return node_1.value < node_2.value; });
     }
 
     void sort_(bool (*func)(node<T>, node<T>))
@@ -216,17 +241,18 @@ public:
     }
 
     template <class key_type>
-    typename vector<node<T>>::iterator get_lower_bound(key_type key, key_type(*attribute)(const node<T>&)) {
+    typename vector<node<T>>::iterator get_lower_bound(key_type key, key_type (*attribute)(const node<T> &))
+    {
         /*return std::lower_bound(vertices.begin(), vertices.end(), key,
             [&](node<T> obj, key_type k) {
                 return attribute(obj) < k;
             });*/
 
-        
         typename vector<node<T>>::iterator prev = vertices.begin();
         typename vector<node<T>>::iterator iter = vertices.begin();
 
-        while (iter < vertices.end()) {
+        while (iter < vertices.end())
+        {
             if (attribute(*iter) > key)
                 return iter;
             prev = iter;
@@ -236,14 +262,16 @@ public:
     }
 
     template <class key_type>
-    typename vector<node<T>>::iterator get_upper_bound(key_type key, key_type(*attribute)(const node<T>&)) {
+    typename vector<node<T>>::iterator get_upper_bound(key_type key, key_type (*attribute)(const node<T> &))
+    {
         /*return std::upper_bound(vertices.begin(), vertices.end(), key,
             [&](node<T> obj, key_type k) {
                 return attribute(obj) < k;
             });*/
 
         typename vector<node<T>>::iterator iter = vertices.begin();
-        while (iter < vertices.end()) {
+        while (iter < vertices.end())
+        {
             if (attribute(*iter) > key)
                 return iter;
             iter++;
