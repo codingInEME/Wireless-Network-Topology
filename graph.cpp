@@ -28,7 +28,7 @@ private:
 public:
     graph(bool directed) : directed(directed) {}
     void destroy() {
-        vertices.clear();   
+        vertices.clear();
     }
 
     int vertex_count() {
@@ -46,15 +46,35 @@ public:
         return directed ? total : total / 2;
     }
 
+    typename vector<node<T>>::iterator begin() {
+        return find_vertex(0);
+    }
+
+    typename vector<node<T>>::iterator end() {
+        return find_vertex(vertex_count() - 1);
+    }
+
     node<T>* find_vertex(T name) {
         node<T>* found = nullptr;
 
         for_each(vertices.begin(), vertices.end(), [&](node<T>& vertex) {
             if (vertex.value == name)
-                found = &vertex;
+            found = &vertex;
             }
         );
         return found;
+    }
+
+    typename vector<node<T>>::iterator find_vertex(int index) {
+        typename vector<node<T>>::iterator iter = vertices.begin();
+
+        for (int i = 0; i < index; i++) {
+            if (iter == vertices.end())
+                break;
+            iter++;
+        }
+
+        return iter;
     }
 
     bool edge_exist(T vertex1, T vertex2) {
@@ -88,7 +108,7 @@ public:
     {
         vertices.erase(remove_if(vertices.begin(), vertices.end(), [&](node<T>& vertex) {
             vertex.adj_vertices.remove(name); // removing the vertex value from adjacency list of every vertex
-            return vertex.value == name; // if vertex is found then it is erased from vector
+        return vertex.value == name; // if vertex is found then it is erased from vector
             }
         ), vertices.end());
     }
@@ -186,7 +206,7 @@ public:
 
     void sort_()
     {
-        std::sort(vertices.begin, vertices.end, [&](node<T> node_1, node<T> node_2) {return node_1.value < node_2.value;});
+        std::sort(vertices.begin, vertices.end, [&](node<T> node_1, node<T> node_2) {return node_1.value < node_2.value; });
     }
 
     void sort_(bool (*func)(node<T>, node<T>))
@@ -195,18 +215,38 @@ public:
     }
 
     template <class key_type>
-    typename vector<node<T>>::iterator get_lower_bound(key_type key, key_type (*attribute)(const node<T>&)) {
-        return std::lower_bound(vertices.begin(), vertices.end(), key, 
-            [&](node<T> obj, key_type k){
+    typename vector<node<T>>::iterator get_lower_bound(key_type key, key_type(*attribute)(const node<T>&)) {
+        /*return std::lower_bound(vertices.begin(), vertices.end(), key,
+            [&](node<T> obj, key_type k) {
                 return attribute(obj) < k;
-        });
+            });*/
+
+        
+        typename vector<node<T>>::iterator prev = vertices.begin();
+        typename vector<node<T>>::iterator iter = vertices.begin();
+
+        while (iter < vertices.end()) {
+            if (attribute(*iter) > key)
+                return prev;
+            prev = iter;
+            iter++;
+        }
+        return vertices.end();
     }
 
     template <class key_type>
     typename vector<node<T>>::iterator get_upper_bound(key_type key, key_type(*attribute)(const node<T>&)) {
-        return std::upper_bound(vertices.begin(), vertices.end(), key,
+        /*return std::upper_bound(vertices.begin(), vertices.end(), key,
             [&](node<T> obj, key_type k) {
                 return attribute(obj) < k;
-            });
+            });*/
+
+        typename vector<node<T>>::iterator iter = vertices.begin();
+        while (iter < vertices.end()) {
+            if (attribute(*iter) > key)
+                return iter;
+            iter++;
+        }
+        return vertices.end();
     }
 };

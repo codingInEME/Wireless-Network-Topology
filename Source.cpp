@@ -11,14 +11,14 @@ struct router
 	string name;
 	point location;
 
-	friend ostream& operator<<(ostream& os, router& r)
+	friend ostream &operator<<(ostream &os, router &r)
 	{
 		cout << r.name << "\t: " << '(' << r.location.getX() << " \t,      " << r.location.getY() << ") \t";
 		return os;
 	}
 };
 
-template<class T>
+template <class T>
 bool distance_sort(node<T> n1, node<T> n2)
 {
 	router r1 = n1.value, r2 = n2.value;
@@ -26,28 +26,33 @@ bool distance_sort(node<T> n1, node<T> n2)
 	return r1.location.distance(origin) < r2.location.distance(origin);
 }
 
-template<class T>
+template <class T>
 bool x_sort(node<T> n1, node<T> n2)
 {
 	router r1 = n1.value, r2 = n2.value;
 	return r1.location.getX() < r2.location.getX();
 }
 
-template<class T>
+template <class T>
 bool y_sort(node<T> n1, node<T> n2)
 {
 	router r1 = n1.value, r2 = n2.value;
 	return r1.location.getY() < r2.location.getY();
 }
 
-double get_attr_x(const node<router>& n)
+double get_attr_x(const node<router> &n)
 {
 	return n.value.location.getX();
 }
 
-double get_attr_y(const node<router>& n)
+double get_attr_y(const node<router> &n)
 {
 	return n.value.location.getY();
+}
+
+bool inside_circle(point center, double radius, point p)
+{
+	return false;
 }
 
 class udg_generation
@@ -58,13 +63,15 @@ private:
 		double f = static_cast<double>(rand()) / RAND_MAX;
 		return fMin + f * (fMax - fMin);
 	}
+
 public:
 	graph<router> generate(int router_count, int grid_size)
 	{
 		graph<router> network(false);
 
-		srand(time_t(0));
-		for (int i = 0; i < router_count; i++) {
+		srand(0);
+		for (int i = 0; i < router_count; i++)
+		{
 			router r;
 
 			r.name = to_string(i + 1);
@@ -79,12 +86,20 @@ public:
 		cout << fixed << setprecision(2);
 		network.display();
 
-		vector<node<router>>::iterator iter_l = network.get_lower_bound(4.6, get_attr_x);
-		cout << "lower_bound: " << iter_l->value.name << '\n';
+		cout << "network.begin(): " << network.begin()->value.name << "\n";
+		cout << "network.end(): " << network.end()->value.name << "\n";
 
-		/*vector<node<router>>::iterator iter_u = network.get_upper_bound(4.6, get_attr_x);
-		cout << "upper_bound: " << iter_u->value.name << '\n';*/
+		/*for (auto node = network.begin(); node < network.end(); node++) {
+			vector<node<router>>::iterator iter_l = network.get_lower_bound(4.8, get_attr_x);
+			cout << "lower_bound: " << iter_l->value.name << '\n';
 
+			vector<node<router>>::iterator iter_u = network.get_upper_bound(4.58, get_attr_x);
+			cout << "upper_bound: " << iter_u->value.name << '\n';
+
+			for (auto i = iter_l; i < iter_u; i++) {
+				inside_circle();
+			}
+		}*/
 		return network;
 	}
 };
@@ -94,6 +109,6 @@ int main()
 	udg_generation grid;
 
 	graph<router> net = grid.generate(10, 50);
-	
+
 	return 0;
 }
