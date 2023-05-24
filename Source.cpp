@@ -45,21 +45,9 @@ bool x_sort(node<T> n1, node<T> n2)
 	return r1.location.getX() < r2.location.getX();
 }
 
-template <class T>
-bool y_sort(node<T> n1, node<T> n2)
-{
-	router r1 = n1.value, r2 = n2.value;
-	return r1.location.getY() < r2.location.getY();
-}
-
 double get_attr_x(const node<router> &n)
 {
 	return n.value.location.getX();
-}
-
-double get_attr_y(const node<router> &n)
-{
-	return n.value.location.getY();
 }
 
 bool inside_range(router center, router p)
