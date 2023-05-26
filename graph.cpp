@@ -3,8 +3,10 @@
 #include <vector>
 #include <queue>
 #include <unordered_map>
+#include <set>
 #include <stack>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 
@@ -12,7 +14,7 @@ template <class T>
 struct node
 {
     T value;
-    list<T> adj_vertices;
+    list<typename vector<node<T>>::iterator> adj_vertices;
 
     bool operator<(const node<T> &n) const
     {
@@ -61,44 +63,41 @@ public:
 
     typename vector<node<T>>::iterator begin()
     {
-        return find_vertex(0);
+        return find_vertex_by_index(0);
     }
 
     typename vector<node<T>>::iterator end()
     {
-        return find_vertex(vertex_count() - 1);
+        return find_vertex_by_index(vertex_count() - 1);
     }
 
-    node<T> *find_vertex(T name)
+    /*typename vector<node<T>>::iterator find_vertex(T name)
     {
-        node<T> *found = nullptr;
-
-        for_each(vertices.begin(), vertices.end(), [&](node<T> &vertex)
-                 {
-            if (vertex.value == name)
-                found = &vertex; });
-        return found;
-    }
-
-    typename vector<node<T>>::iterator find_vertex(int index)
-    {
-        typename vector<node<T>>::iterator iter = vertices.begin();
-
-        for (int i = 0; i < index; i++)
+        auto iter = vertices.begin();
+        while (iter < vertices.end())
         {
-            if (iter == vertices.end())
+            if (iter->value == name)
                 break;
-            iter++;
+            ++iter;
         }
+
+        return iter;
+    }*/
+
+    typename vector<node<T>>::iterator find_vertex_by_index(int index)
+    {
+        auto iter = vertices.begin() + index;
 
         return iter;
     }
 
-    bool edge_exist(T vertex1, T vertex2)
+    bool edge_exist(typename vector<node<T>>::iterator vertex1, typename vector<node<T>>::iterator vertex2)
     {
-        if (node<T> *obj = find_vertex(vertex1))
+        auto obj = vertex1;
+
+        if (obj != vertices.end())
         {
-            typename list<T>::template iterator location = find(obj->adj_vertices.begin(), obj->adj_vertices.end(), vertex2);
+            auto location = find(obj->adj_vertices.begin(), obj->adj_vertices.end(), vertex2);
 
             return location == obj->adj_vertices.end() ? false : true;
         }
@@ -112,98 +111,87 @@ public:
         vertices.push_back(v);
     }
 
-    void insert_edge(T vertex1, T vertex2)
+    void insert_edge(typename vector<node<T>>::iterator vertex1, typename vector<node<T>>::iterator vertex2)
     {
 
-        node<T> *obj1 = find_vertex(vertex1), *obj2 = find_vertex(vertex2);
+        auto obj1 = vertex1, obj2 = vertex2;
 
-        if (obj1 != nullptr && obj2 != nullptr && !edge_exist(vertex1, vertex2))
+        if (obj1 != vertices.end() && obj2 != vertices.end()) //&& !edge_exist(vertex1, vertex2->value))
         {
-            obj1->adj_vertices.push_back(vertex2);
+            vertex1->adj_vertices.push_back(vertex2);
 
             if (!directed && vertex1 != vertex2)
-                obj2->adj_vertices.push_back(vertex1);
+                vertex2->adj_vertices.push_back(vertex1);
         }
     }
 
-    void delete_vertex(T name)
+    void delete_vertex(typename vector<node<T>>::iterator vertex_name)
     {
         vertices.erase(remove_if(vertices.begin(), vertices.end(), [&](node<T> &vertex)
                                  {
-                                     vertex.adj_vertices.remove(name); // removing the vertex value from adjacency list of every vertex
-                                     return vertex.value == name;      // if vertex is found then it is erased from vector
+                                     vertex.adj_vertices.remove(vertex_name); // removing the vertex value from adjacency list of every vertex
+                                     return vertex == *vertex_name;           // if vertex is found then it is erased from vector
                                  }),
                        vertices.end());
     }
 
-    void delete_edge(T vertex1, T vertex2)
+    void delete_edge(typename vector<node<T>>::iterator vertex1, typename vector<node<T>>::iterator vertex2)
     {
-        if (!edge_exist(vertex1, vertex2))
-            return;
-
-        node<T> *obj1 = find_vertex(vertex1), *obj2 = find_vertex(vertex2);
+        auto obj1 = vertex1, obj2 = vertex2;
 
         obj1->adj_vertices.remove(vertex2);
 
         if (!directed)
-        {
-            if (!edge_exist(vertex2, vertex1))
-                return;
-
             obj2->adj_vertices.remove(vertex1);
-        }
     }
 
-    void bfs(T start)
+    void bfs(typename vector<node<T>>::iterator start)
     {
-        if (!find_vertex(start))
-            return;
-
-        queue<T> q;
-        unordered_map<T, bool> visited;
+        queue<typename vector<node<T>>::iterator> q;
+        set<typename vector<node<T>>::iterator> visited;
         q.push(start);
-        visited[start] = true;
+        visited.insert(start);
         while (!q.empty())
         {
-            T curr = q.front();
-            cout << curr << ' ';
+            auto curr = q.front();
+            cout << curr->value << ' ';
             q.pop();
-            node<T> *vertex = find_vertex(curr);
+            auto vertex = curr;
 
             for (auto adj_vert : vertex->adj_vertices)
             {
-                if (visited[adj_vert])
+                if (visited.find(adj_vert) != visited.end())
                     continue;
 
-                visited[adj_vert] = true;
+                visited.insert(adj_vert);
                 q.push(adj_vert);
             }
         }
         cout << '\n';
     }
 
-    void dfs(T start)
+    void dfs(typename vector<node<T>>::iterator start)
     {
-        if (!find_vertex(start))
+        if (find_vertex(start) == vertices.end())
             return;
 
-        stack<T> s;
-        unordered_map<T, bool> visited;
+        stack<typename vector<node<T>>::iterator> s;
+        set<typename vector<node<T>>::iterator> visited;
         s.push(start);
-        visited[start] = true;
+        visited.insert(start);
         while (!s.empty())
         {
-            T curr = s.top();
-            cout << curr << ' ';
+            auto curr = s.top();
+            cout << curr->value << ' ';
             s.pop();
-            node<T> *vertex = find_vertex(curr);
+            auto vertex = find_vertex(curr);
 
             for (auto adj_vert : vertex->adj_vertices)
             {
-                if (visited[adj_vert])
+                if (visited.find(adj_vert) != visited.end())
                     continue;
 
-                visited[adj_vert] = true;
+                visited.insert(adj_vert);
                 s.push(adj_vert);
             }
         }
@@ -223,7 +211,7 @@ public:
             cout << " : { ";
             for (auto adjacent_vertex : vertex.adj_vertices)
             {
-                cout << adjacent_vertex << ' ';
+                cout << adjacent_vertex->value << ' ';
             }
             cout << "}\n";
         }
@@ -243,34 +231,72 @@ public:
     template <class key_type>
     typename vector<node<T>>::iterator get_lower_bound(key_type key, key_type (*attribute)(const node<T> &))
     {
-        /*return std::lower_bound(vertices.begin(), vertices.end(), key,
-            [&](node<T> obj, key_type k) {
-                return attribute(obj) < k;
-            });*/
+        typename vector<node<T>>::iterator begin = vertices.begin();
+        typename vector<node<T>>::iterator end = vertices.end();
+        typename vector<node<T>>::iterator it = vertices.begin();
+        // if(list.)
+        if (key > attribute(*--vertices.end()))
+            return --vertices.end();
 
-        typename vector<node<T>>::iterator prev = vertices.begin();
-        typename vector<node<T>>::iterator iter = vertices.begin();
-
-        while (iter < vertices.end())
+        while (attribute(*it) != key)
         {
-            if (attribute(*iter) > key)
-                return iter;
-            prev = iter;
-            iter++;
+            int size = (end - begin) / 2;
+            it = begin + size;
+            if (attribute(*it) != key)
+            {
+                if (key > attribute(*it))
+                {
+                    begin = ++it;
+                }
+                else
+                {
+                    if (it != begin)
+                        end = --it;
+                    else
+                        return it;
+                }
+                /*if (begin == end || begin > end) {
+                    if (*it > key) return it;
+                    return ++it;
+                }*/
+            }
         }
-        return vertices.end();
+        return it;
     }
 
     template <class key_type>
     typename vector<node<T>>::iterator get_upper_bound(key_type key, key_type (*attribute)(const node<T> &))
     {
-        typename vector<node<T>>::iterator iter = vertices.begin();
-        while (iter < vertices.end())
+        typename vector<node<T>>::iterator begin = vertices.begin();
+        typename vector<node<T>>::iterator end = vertices.end();
+        typename vector<node<T>>::iterator it = vertices.begin();
+        // if(list.)
+        if (key > attribute(*--vertices.end()))
+            return --vertices.end();
+
+        while (attribute(*it) != key)
         {
-            if (attribute(*iter) > key)
-                return iter;
-            iter++;
+            int size = (end - begin) / 2;
+            it = begin + size;
+            if (attribute(*it) != key)
+            {
+                if (key > attribute(*it))
+                {
+                    begin = ++it;
+                }
+                else
+                {
+                    if (it != begin)
+                        end = --it;
+                    else
+                        return it;
+                }
+                /*if (begin == end || begin > end) {
+                    if (*it > key) return it;
+                    return ++it;
+                }*/
+            }
         }
-        return vertices.end();
+        return it;
     }
 };
