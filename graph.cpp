@@ -137,6 +137,8 @@ public:
 
     void delete_edge(typename vector<node<T>>::iterator vertex1, typename vector<node<T>>::iterator vertex2)
     {
+        if (!edge_exist(vertex1, vertex2))
+            return;
         auto obj1 = vertex1, obj2 = vertex2;
 
         obj1->adj_vertices.remove(vertex2);

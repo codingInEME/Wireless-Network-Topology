@@ -146,19 +146,91 @@ public:
 		// network.display();
 		cout << "\n"
 			 << duration1.count() << endl;
-		cout << "Abdullah Ihsan Gay! " << endl;
 
 		return network;
 		// system("pause");
 	}
 };
 
+struct connection
+{
+	vector<node<router>>::iterator vertex;
+	vector<node<router>>::iterator neighbor;
+
+	connection(vector<node<router>>::iterator vertex, vector<node<router>>::iterator neighbor)
+	{
+		this->vertex = vertex;
+		this->neighbor = neighbor;
+	}
+};
+
+class topologyControl
+{
+public:
+	graph<router> XTC_protocol(graph<router> &g)
+	{
+		graph<router> tempGraph = g;
+		list<connection> marked_for_delete;
+
+		bool allow = false;
+		for (auto vertex = tempGraph.begin(); vertex != tempGraph.end(); ++vertex)
+		{
+			for (auto neighbor = vertex->adj_vertices.begin(); neighbor != vertex->adj_vertices.end(); ++neighbor)
+			{
+				if (vertex->value.name == "38" && (*neighbor)->value.name == "8")
+				{
+					allow = true;
+					cout << "temp graph\n";
+					tempGraph.display();
+					cout << "\n\n";
+					cout << "38->8 found\n";
+					cout << "topology graph\n";
+					g.display();
+					cout << "\n\n";
+				}
+				for (auto nextNeighbor = (*neighbor)->adj_vertices.begin(); nextNeighbor != (*neighbor)->adj_vertices.end(); ++nextNeighbor)
+				{
+					if (vertex->value.location.distance((*nextNeighbor)->value.location) < vertex->value.location.distance((*neighbor)->value.location) &&
+						((*nextNeighbor)->value.location.distance((*neighbor)->value.location) < vertex->value.location.distance((*neighbor)->value.location)))
+					{
+						/*connection c(g.find_vertex_by_index(tempGraph.end() - vertex - 1), *neighbor);
+						marked_for_delete.push_back(c);*/
+						g.delete_edge(g.find_vertex_by_index(tempGraph.end() - vertex - 1), *neighbor);
+						if (allow)
+						{
+							cout << "temp graph\n";
+							tempGraph.display();
+							cout << "\n\n";
+							cout << "topology graph\n";
+							g.display();
+							cout << "\n\n";
+						}
+					}
+				}
+			}
+		}
+
+		for (auto iter = marked_for_delete.begin(); iter != marked_for_delete.end(); ++iter)
+		{
+			g.delete_edge(iter->vertex, iter->neighbor);
+		}
+
+		return g;
+	}
+};
+
 int main()
 {
 	udg_generation grid;
+	topologyControl tc;
 
-	graph<router> net = grid.generate(10, 50);
+	graph<router> net = grid.generate(50, 10);
+	cout << "udg generated\n";
+	// net.display();
+	cout << "\n\n";
+	graph<router> net_xtc = tc.XTC_protocol(net);
 
-	cout << "Abdullah Ihsan Gay! " << endl;
+	net_xtc.display();
+
 	system("pause");
 }
