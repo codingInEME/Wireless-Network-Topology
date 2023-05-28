@@ -209,7 +209,7 @@ int main()
     udg_generation grid;
     topologyControl tc;
 
-    graph<router> net = grid.generate(5000, 10);
+    graph<router> net = grid.generate(1000, 10);
     cout << "udg generated\n";
     // net.display();
     cout << "\n\n";
