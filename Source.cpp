@@ -4,6 +4,15 @@
 #include "point.cpp"
 #include "graph.cpp"
 #include <chrono>
+#include <fstream>
+
+#ifdef _WIN32
+#include <windows.h>
+#elif __linux__
+#include <cstdlib>
+#elif __APPLE__
+#include <cstdlib>
+#endif
 
 using namespace std;
 
@@ -11,20 +20,20 @@ struct router
 {
     string name;
     point location;
-    double range = 1;
+    double range = 12;
 
-    friend ostream& operator<<(ostream& os, router& r)
+    friend ostream &operator<<(ostream &os, router &r)
     {
         cout << r.name;
         return os;
     }
 
-    bool operator==(const router& r) const
+    bool operator==(const router &r) const
     {
         return name == r.name;
     }
 
-    bool operator!=(const router& r) const
+    bool operator!=(const router &r) const
     {
         return !(name == r.name);
     }
@@ -52,7 +61,7 @@ bool y_sort(node<T> n1, node<T> n2)
     return r1.location.getY() < r2.location.getY();
 }
 
-double get_attr_x(const node<router>& n)
+double get_attr_x(const node<router> &n)
 {
     return n.value.location.getX();
 }
@@ -75,33 +84,6 @@ private:
 public:
     graph<router> generate(int router_count, int grid_size)
     {
-        /*graph<router> network1(false);
-
-        srand(0);
-        for (int i = 0; i < router_count; i++)
-        {
-            router r;
-
-            r.name = to_string(i + 1);
-            r.location.setX(fRand(0, grid_size));
-            r.location.setY(fRand(0, grid_size));
-
-            network1.insert_vertex(r);
-        }
-
-        auto start = std::chrono::high_resolution_clock::now();
-        for (auto node = network1.begin(); node < network1.end(); node++)
-        {
-            for (auto n = network1.begin(); n < node; n++) {
-                if (inside_range(node->value, n->value) && node != n)
-                    network1.insert_edge(node, n);
-            }
-        }
-        auto stop = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-
-        cout << '\n' << duration.count() << '\n';*/
-
         graph<router> network(false);
 
         srand(0);
@@ -117,13 +99,6 @@ public:
         }
 
         network.sort_(x_sort);
-
-        cout << "X-Sorted:\n";
-        cout << fixed << setprecision(2);
-        // network.display();
-
-        cout << "network.begin(): " << network.begin()->value.name << "\n";
-        cout << "network.end() " << network.end()->value.name << "\n";
 
         auto start1 = std::chrono::high_resolution_clock::now();
         for (auto node = network.begin(); node < network.end() + 1; ++node)
@@ -143,12 +118,10 @@ public:
         auto stop1 = std::chrono::high_resolution_clock::now();
         auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(stop1 - start1);
 
-        // network.display();
         cout << "\n"
-            << duration1.count() << endl;
+             << duration1.count() << endl;
 
         return network;
-        // system("pause");
     }
 };
 
@@ -167,9 +140,8 @@ struct connection
 class topologyControl
 {
 public:
-    graph<router> XTC_protocol(graph<router>& g)
+    graph<router> XTC_protocol(graph<router> &g)
     {
-        //graph<router> tempGraph = g;
         list<connection> marked_for_delete;
 
         auto start1 = std::chrono::high_resolution_clock::now();
@@ -198,30 +170,74 @@ public:
         auto stop1 = std::chrono::high_resolution_clock::now();
         auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(stop1 - start1);
 
-        cout << "\n" << duration1.count() << endl;
+        cout << "\n"
+             << duration1.count() << endl;
 
         return g;
     }
 };
+
+void generateFile(graph<router> &g, string fileName)
+{
+    ofstream file;
+    file.open(fileName + ".dot");
+
+    file << "strict graph G {\n";
+    for (auto vertex = g.begin(); vertex != g.end(); ++vertex)
+    {
+        file << "\t" << vertex->value.name << "\t[pos = \""
+             << vertex->value.location.getX() << "," << vertex->value.location.getY() << "!\"]\n";
+
+        file << "\t" << vertex->value.name << " -- {";
+        for (auto neighbor = vertex->adj_vertices.begin(); neighbor != vertex->adj_vertices.end(); ++neighbor)
+            file << (*neighbor)->value.name << " ";
+        file << "}\n";
+    }
+    file << "}\n";
+
+    file.close();
+}
+
+void generateImage(string fileName)
+{
+
+    string a = "dot -Kfdp -n -Tpng -o" + fileName + ".png " + fileName + ".dot";
+    const char *command = a.c_str();
+
+#ifdef _WIN32
+    // Windows-specific code
+    system(command);
+#elif __linux__
+    // Linux-specific code
+    system(command);
+#elif __APPLE__
+    // macOS-specific code
+    system(command);
+#else
+#error Unsupported operating system
+#endif
+}
 
 int main()
 {
     udg_generation grid;
     topologyControl tc;
 
-    graph<router> net = grid.generate(1000, 10);
+    graph<router> net = grid.generate(1000, 100);
     cout << "udg generated\n";
-    // net.display();
+    net.display();
+    generateFile(net, "graph");
+    generateImage("graph");
     cout << "\n\n";
 
     auto start1 = std::chrono::high_resolution_clock::now();
-    graph<router> net_xtc = tc.XTC_protocol(net);
+    tc.XTC_protocol(net);
     auto stop1 = std::chrono::high_resolution_clock::now();
     auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(stop1 - start1);
-    cout << "\n" << duration1.count() << endl;
+    cout << "\n"
+         << duration1.count() << endl;
 
-    net_xtc.display();
-    
-    cout << "Abdullah Gay" << endl;
-
+    net.display();
+    generateFile(net, "graph_xtc");
+    generateImage("graph_xtc");
 }
