@@ -225,10 +225,15 @@ int main()
 
     graph<router> net = grid.generate(1000, 10);
     cout << "udg generated\n";
-    //net.display();
+    // net.display();
+    auto start3 = std::chrono::high_resolution_clock::now();
     generateFile(net, "graph");
     generateImage("graph");
     cout << "\n\n";
+    auto stop3 = std::chrono::high_resolution_clock::now();
+    auto duration3 = std::chrono::duration_cast<std::chrono::microseconds>(stop3 - start3);
+    cout << "\n"
+         << duration3.count() << endl;
 
     auto start1 = std::chrono::high_resolution_clock::now();
     tc.XTC_protocol(net);
@@ -237,14 +242,14 @@ int main()
     cout << "\n"
          << duration1.count() << endl;
 
-    //net.display();
-     auto start2 = std::chrono::high_resolution_clock::now();
+    // net.display();
+    auto start2 = std::chrono::high_resolution_clock::now();
     generateFile(net, "graph_xtc");
     generateImage("graph_xtc");
     auto stop2 = std::chrono::high_resolution_clock::now();
     auto duration2 = std::chrono::duration_cast<std::chrono::microseconds>(stop2 - start2);
     cout << "\n"
          << duration2
-         .count() << endl;
-    
+                .count()
+         << endl;
 }
