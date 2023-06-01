@@ -20,7 +20,7 @@ struct router
 {
     string name;
     point location;
-    double range = 12;
+    double range = 1;
 
     friend ostream &operator<<(ostream &os, router &r)
     {
@@ -201,7 +201,7 @@ void generateFile(graph<router> &g, string fileName)
 void generateImage(string fileName)
 {
 
-    string a = "dot -Kfdp -n -Tpng -o" + fileName + ".png " + fileName + ".dot";
+    string a = "dot -Kfdp -n -Tsvg -o" + fileName + ".svg " + fileName + ".dot";
     const char *command = a.c_str();
 
 #ifdef _WIN32
@@ -223,9 +223,9 @@ int main()
     udg_generation grid;
     topologyControl tc;
 
-    graph<router> net = grid.generate(1000, 100);
+    graph<router> net = grid.generate(1000, 10);
     cout << "udg generated\n";
-    net.display();
+    //net.display();
     generateFile(net, "graph");
     generateImage("graph");
     cout << "\n\n";
@@ -237,7 +237,14 @@ int main()
     cout << "\n"
          << duration1.count() << endl;
 
-    net.display();
+    //net.display();
+     auto start2 = std::chrono::high_resolution_clock::now();
     generateFile(net, "graph_xtc");
     generateImage("graph_xtc");
+    auto stop2 = std::chrono::high_resolution_clock::now();
+    auto duration2 = std::chrono::duration_cast<std::chrono::microseconds>(stop2 - start2);
+    cout << "\n"
+         << duration2
+         .count() << endl;
+    
 }
