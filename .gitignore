@@ -10,3 +10,5 @@ graph.dot
 .vscode/launch.json
 .vscode/c_cpp_properties.json
 Source
+graph.pdf
+graph_xtc.pdf

@@ -257,7 +257,7 @@ void generateFile(graph<router> &g, string fileName)
 void generateImage(string fileName)
 {
 
-    string a = "dot -Kfdp -n -Tsvg -o" + fileName + ".svg " + fileName + ".dot";
+    string a = "dot -Kfdp -n -Tpdf -o" + fileName + ".pdf " + fileName + ".dot";
     const char *command = a.c_str();
 
 #ifdef _WIN32
@@ -339,9 +339,9 @@ int main()
          << duration3.count() << endl;
 
   
-    net.display();
+    //net.display();
     auto start2 = std::chrono::high_resolution_clock::now();
-    generateFile(net, "graph_xtc");
+    generateFile(xtc_net, "graph_xtc");
     generateImage("graph_xtc");
     auto stop2 = std::chrono::high_resolution_clock::now();
     auto duration2 = std::chrono::duration_cast<std::chrono::microseconds>(stop2 - start2);
