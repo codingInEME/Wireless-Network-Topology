@@ -137,7 +137,7 @@ struct connection
 class topologyControl
 {
 public:
-    graph<router> XTC_protocol(graph<router> &g)
+    graph<router> XTC_protocol(graph<router> g)
     {
         list<connection> marked_for_delete;
 
@@ -287,6 +287,7 @@ int main()
     cin >> grid_size;
     bool loop = true;
     graph<router> net(false);
+    graph<router> xtc_net(false);
     int input;
 
     while(loop){
@@ -300,6 +301,25 @@ int main()
             net = grid.generate(no_routers, grid_size);
             //net.display();
             cout << "Graph generated\n";
+        }
+        break;
+        case 2:
+        {
+            auto start1 = std::chrono::high_resolution_clock::now();
+            xtc_net = tc.XTC_protocol(net);
+            auto stop1 = std::chrono::high_resolution_clock::now();
+            auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(stop1 - start1);
+            cout << "\n" << duration1.count() << endl;
+        }
+        break;
+        case 3:
+        {
+            net.display();
+        }
+        break;
+        case 4:
+        {
+            xtc_net.display();
         }
         break;
         default:
@@ -318,13 +338,7 @@ int main()
     cout << "\n"
          << duration3.count() << endl;
 
-    auto start1 = std::chrono::high_resolution_clock::now();
-    tc.XTC_protocol(net);
-    auto stop1 = std::chrono::high_resolution_clock::now();
-    auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(stop1 - start1);
-    cout << "\n"
-         << duration1.count() << endl;
-
+  
     net.display();
     auto start2 = std::chrono::high_resolution_clock::now();
     generateFile(net, "graph_xtc");
