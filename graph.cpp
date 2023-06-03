@@ -1,6 +1,8 @@
+
 #include <iostream>
 #include <list>
 #include <vector>
+#include <string>
 #include <queue>
 #include <unordered_map>
 #include <set>
@@ -8,13 +10,13 @@
 #include <algorithm>
 #include <cmath>
 
-using namespace std;
+//using namespace std;
 
 template <class T>
 struct node
 {
     T value;
-    list<int> adj_vertices;
+    std::list<int> adj_vertices;
 
     bool operator<(const node<T> &n) const
     {
@@ -37,7 +39,7 @@ class graph
 {
 private:
     bool directed;
-    vector<node<T>> vertices;
+    std::vector<node<T>> vertices;
 
     bool isOutOfVectorRange(int ID)
     {
@@ -66,24 +68,24 @@ public:
         return directed ? total : total / 2;
     }
 
-    typename vector<node<T>>::iterator begin()
+    typename std::vector<node<T>>::iterator begin()
     {
         return find_vertex_by_index(0);
     }
 
-    typename vector<node<T>>::iterator end()
+    typename std::vector<node<T>>::iterator end()
     {
         return find_vertex_by_index(vertex_count() - 1);
     }
 
-    typename vector<node<T>>::iterator find_vertex_by_index(int index)
+    typename std::vector<node<T>>::iterator find_vertex_by_index(int index)
     {
         auto iter = vertices.begin() + index;
 
         return iter;
     }
 
-    typename vector<node<T>>::iterator find_vertex_by_name(string name)
+    typename std::vector<node<T>>::iterator find_vertex_by_name(std::string name)
     {
         auto iter = vertices.begin();
         while (iter < vertices.end())
@@ -159,18 +161,24 @@ public:
         return vertices.empty();
     }
 
-    void display()
+    std::string display()
     {
+        std::string output ="";
         for (auto vertex : vertices)
         {
-            cout << vertex.value << " : (" << vertex.value.location.getX() << ", " << vertex.value.location.getY() << ")";
-            cout << " : { ";
+            output += (vertex.value.name) + " : (" + std::to_string(vertex.value.location.getX()) + ", " + std::to_string(vertex.value.location.getY()) + ")";
+            std::cout << vertex.value << " : (" << vertex.value.location.getX() << ", " << vertex.value.location.getY() << ")";
+            output += " : { ";
+            std::cout << " : { ";
             for (auto adjacent_vertex : vertex.adj_vertices)
             {
-                cout << vertices[adjacent_vertex].value << ' ';
+                output += (vertices[adjacent_vertex].value.name) + ' ';
+                std::cout << vertices[adjacent_vertex].value << ' ';
             }
-            cout << "}\n";
+            output += "}\n";
+            std::cout << "}\n";
         }
+        return output;
     }
 
     void sort_()
@@ -185,11 +193,11 @@ public:
     }
 
     template <class key_type>
-    typename vector<node<T>>::iterator get_closest(key_type key, key_type (*attribute)(const node<T> &))
+    typename std::vector<node<T>>::iterator get_closest(key_type key, key_type (*attribute)(const node<T> &))
     {
-        typename vector<node<T>>::iterator begin = vertices.begin();
-        typename vector<node<T>>::iterator end = vertices.end();
-        typename vector<node<T>>::iterator it = vertices.begin();
+        typename std::vector<node<T>>::iterator begin = vertices.begin();
+        typename std::vector<node<T>>::iterator end = vertices.end();
+        typename std::vector<node<T>>::iterator it = vertices.begin();
         // if(list.)
         if (key > attribute(*--vertices.end()))
             return --vertices.end();
@@ -216,7 +224,7 @@ public:
         return it;
     }
 
-    typename vector<node<T>>::iterator operator[](int index)
+    typename std::vector<node<T>>::iterator operator[](int index)
     {
         return find_vertex_by_index(index);
     }
