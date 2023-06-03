@@ -279,9 +279,36 @@ int main()
     udg_generation grid;
     topologyControl tc;
 
-    graph<router> net = grid.generate(1000, 10);
-    cout << "udg generated\n";
-    net.display();
+    cout << "Welcome to Wireless Network Topology" << endl;
+    cout << "Enter number of routers :";
+    int no_routers,grid_size;
+    cin >> no_routers;
+    cout << "Enter grid size SxS:";
+    cin >> grid_size;
+    bool loop = true;
+    graph<router> net(false);
+    int input;
+
+    while(loop){
+        cout << " 1. Generate Graph. \n 2. Apply Topology Control. \n 3. Display Graph. \n 4. Display Graph with Topology Control.\n";
+        cout << "Enter choice: ";
+        cin >> input;
+        switch (input)
+        {
+        case 1:
+        {
+            net = grid.generate(no_routers, grid_size);
+            //net.display();
+            cout << "Graph generated\n";
+        }
+        break;
+        default:
+         loop = false;
+        break;
+        }
+    }
+
+    //net.display();
     auto start3 = std::chrono::high_resolution_clock::now();
     generateFile(net, "graph");
     generateImage("graph");
