@@ -39,23 +39,20 @@ struct router
     }
 };
 
-template <class T>
-bool distance_sort(node<T> n1, node<T> n2)
+bool distance_sort(node<router> n1, node<router> n2)
 {
     router r1 = n1.value, r2 = n2.value;
     const point origin(0, 0);
     return r1.location.distance(origin) < r2.location.distance(origin);
 }
 
-template <class T>
-bool x_sort(node<T> n1, node<T> n2)
+bool x_sort(node<router> n1, node<router> n2)
 {
     router r1 = n1.value, r2 = n2.value;
     return r1.location.getX() < r2.location.getX();
 }
 
-template <class T>
-bool y_sort(node<T> n1, node<T> n2)
+bool y_sort(node<router> n1, node<router> n2)
 {
     router r1 = n1.value, r2 = n2.value;
     return r1.location.getY() < r2.location.getY();
@@ -103,15 +100,15 @@ public:
         auto start1 = std::chrono::high_resolution_clock::now();
         for (auto node = network.begin(); node < network.end() + 1; ++node)
         {
-            auto iter_l = network.get_lower_bound(node->value.location.getX() - node->value.range, get_attr_x);
+            auto iter_l = network.get_closest(node->value.location.getX() - node->value.range, get_attr_x);
 
-            auto iter_u = network.get_upper_bound(node->value.location.getX(), get_attr_x); // extreme right of circle
+            auto iter_u = network.get_closest(node->value.location.getX(), get_attr_x); // extreme right of circle
 
             for (auto i = iter_l; i < iter_u; ++i)
             {
                 if (inside_range(node->value, i->value) && node != i)
                 {
-                    network.insert_edge(node, i);
+                    network.insert_edge(node - network.begin(), i - network.begin());
                 }
             }
         }
@@ -128,12 +125,12 @@ public:
 struct connection
 {
     vector<node<router>>::iterator vertex;
-    vector<node<router>>::iterator neighbor;
+    int neighborID;
 
-    connection(vector<node<router>>::iterator vertex, vector<node<router>>::iterator neighbor)
+    connection(vector<node<router>>::iterator vertex, int neighborID)
     {
         this->vertex = vertex;
-        this->neighbor = neighbor;
+        this->neighborID = neighborID;
     }
 };
 
@@ -145,17 +142,17 @@ public:
         list<connection> marked_for_delete;
 
         auto start1 = std::chrono::high_resolution_clock::now();
-        bool allow = false;
+
         for (auto vertex = g.begin(); vertex != g.end(); ++vertex)
         {
             for (auto neighbor = vertex->adj_vertices.begin(); neighbor != vertex->adj_vertices.end(); ++neighbor)
             {
-                for (auto nextNeighbor = (*neighbor)->adj_vertices.begin(); nextNeighbor != (*neighbor)->adj_vertices.end(); ++nextNeighbor)
+                for (auto nextNeighbor = g[*neighbor]->adj_vertices.begin(); nextNeighbor != g[*neighbor]->adj_vertices.end(); ++nextNeighbor)
                 {
-                    if (vertex->value.location.distance((*nextNeighbor)->value.location) < vertex->value.location.distance((*neighbor)->value.location) &&
-                        ((*nextNeighbor)->value.location.distance((*neighbor)->value.location) < vertex->value.location.distance((*neighbor)->value.location)))
+                    if (vertex->value.location.distance((g[*nextNeighbor]->value.location)) < vertex->value.location.distance((g[*neighbor]->value.location)) &&
+                        (g[*nextNeighbor]->value.location.distance(g[*neighbor]->value.location) < vertex->value.location.distance(g[*neighbor]->value.location)))
                     {
-                        connection c(g.find_vertex_by_index(g.end() - vertex - 1), *neighbor);
+                        connection c(g[vertex - g.begin()], *neighbor);
                         marked_for_delete.push_back(c);
                     }
                 }
@@ -164,7 +161,7 @@ public:
 
         for (auto iter = marked_for_delete.begin(); iter != marked_for_delete.end(); ++iter)
         {
-            g.delete_edge(iter->vertex, iter->neighbor);
+            g.delete_edge(iter->vertex - g.begin(), iter->neighborID);
         }
 
         auto stop1 = std::chrono::high_resolution_clock::now();
@@ -174,6 +171,64 @@ public:
              << duration1.count() << endl;
 
         return g;
+    }
+};
+
+class path
+{
+    graph<router> g;
+
+    double find_angle(point current, point next, point destination)
+    {
+        double a = destination.distance(next);
+        double b = destination.distance(current);
+        double c = current.distance(next);
+        return (b * b + c * c - a * a) / (2 * b * c);
+    }
+
+    bool isVisited(node<router> vertex, vector<node<router>> &vertices)
+    {
+        auto iter = vertices.begin();
+        while (iter < vertices.end())
+        {
+            if (iter->value.name == vertex.value.name)
+                return true;
+            ++iter;
+        }
+        return false;
+    }
+
+public:
+    path(graph<router> &g) : g(g) {}
+
+    // template <class T>
+    vector<node<router>> find_path(string start, string destination)
+    {
+        vector<node<router>> path_vec;
+        vector<node<router>> is_visited;
+
+        vector<node<router>>::iterator current_node = g.find_vertex_by_name(start);
+        vector<node<router>>::iterator destination_node = g.find_vertex_by_name(destination);
+        path_vec.push_back(*current_node);
+        int next_node;
+        while (current_node->value != destination_node->value && !isVisited(*current_node, is_visited))
+        {
+            is_visited.push_back(*current_node);
+            double next_angle = -2;
+            for (auto adj_node = current_node->adj_vertices.begin(); adj_node != current_node->adj_vertices.end(); ++adj_node)
+            {
+                double temp_angle = (find_angle(current_node->value.location, g[*adj_node]->value.location, destination_node->value.location));
+                if (temp_angle > next_angle)
+                {
+                    next_angle = temp_angle;
+                    next_node = (*adj_node);
+                }
+            }
+            current_node = g[next_node];
+            path_vec.push_back(*current_node);
+        }
+
+        return path_vec;
     }
 };
 
@@ -190,7 +245,8 @@ void generateFile(graph<router> &g, string fileName)
 
         file << "\t" << vertex->value.name << " -- {";
         for (auto neighbor = vertex->adj_vertices.begin(); neighbor != vertex->adj_vertices.end(); ++neighbor)
-            file << (*neighbor)->value.name << " ";
+            file << g[*neighbor]->value.name << " ";
+
         file << "}\n";
     }
     file << "}\n";
@@ -225,7 +281,7 @@ int main()
 
     graph<router> net = grid.generate(1000, 10);
     cout << "udg generated\n";
-    // net.display();
+    net.display();
     auto start3 = std::chrono::high_resolution_clock::now();
     generateFile(net, "graph");
     generateImage("graph");
@@ -242,7 +298,7 @@ int main()
     cout << "\n"
          << duration1.count() << endl;
 
-    // net.display();
+    net.display();
     auto start2 = std::chrono::high_resolution_clock::now();
     generateFile(net, "graph_xtc");
     generateImage("graph_xtc");
