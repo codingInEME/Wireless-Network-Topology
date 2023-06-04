@@ -7,11 +7,15 @@
     <x>0</x>
     <y>0</y>
     <width>594</width>
-    <height>401</height>
+    <height>453</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Wireless Network Topology</string>
+  </property>
+  <property name="windowIcon">
+   <iconset theme="network-wireless">
+    <normaloff>Types-of-Communication-Network.jpg</normaloff>Types-of-Communication-Network.jpg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
@@ -34,7 +38,7 @@
           <bool>false</bool>
          </property>
          <property name="text">
-          <string>UDG Generated</string>
+          <string>Network Generated</string>
          </property>
          <property name="checkable">
           <bool>false</bool>
@@ -72,16 +76,6 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="1">
-        <widget class="QPushButton" name="show_net_button">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Show Net Content</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0" alignment="Qt::AlignRight">
         <widget class="QLabel" name="label_3">
          <property name="text">
@@ -109,7 +103,7 @@
        <item row="4" column="3">
         <widget class="QPushButton" name="generateButton">
          <property name="text">
-          <string>Generate UDG</string>
+          <string>Generate Network</string>
          </property>
         </widget>
        </item>
@@ -143,60 +137,10 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="3">
-        <widget class="QPushButton" name="xtc_pdf_button">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Generate XTC PDF</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="1">
-        <widget class="QPushButton" name="open_graph_button">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Open Graph</string>
-         </property>
-        </widget>
-       </item>
        <item row="5" column="0" alignment="Qt::AlignRight|Qt::AlignVCenter">
         <widget class="QLabel" name="label_6">
          <property name="text">
           <string>Range:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="3" alignment="Qt::AlignHCenter">
-        <widget class="QCheckBox" name="XTC_pdf_check">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>XTC PDF Generated</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="3">
-        <widget class="QPushButton" name="pushButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Show XTC Content</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="1">
-        <widget class="QPushButton" name="graph_pdf_button">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Generate Graph PDF</string>
          </property>
         </widget>
        </item>
@@ -210,30 +154,10 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="1" alignment="Qt::AlignHCenter">
-        <widget class="QCheckBox" name="graph_pdf_check">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Graph PDF Generated</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="1" colspan="4">
         <widget class="QLineEdit" name="gridInput">
          <property name="inputMethodHints">
           <set>Qt::ImhDigitsOnly</set>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="3">
-        <widget class="QPushButton" name="open_xtc_button">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Open XTC Graph</string>
          </property>
         </widget>
        </item>
@@ -251,6 +175,86 @@
          </property>
          <property name="text">
           <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="3" colspan="2" alignment="Qt::AlignHCenter">
+        <widget class="QCheckBox" name="XTC_pdf_check">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Topology Graph Generated</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="3" colspan="2">
+        <widget class="QPushButton" name="xtc_pdf_button">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Generate Topology Graph</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="3" colspan="2">
+        <widget class="QPushButton" name="open_xtc_button">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Open XTC Graph</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0" colspan="3">
+        <widget class="QPushButton" name="graph_pdf_button">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Generate Network Graph</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0" colspan="3">
+        <widget class="QPushButton" name="open_graph_button">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Open Graph</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="3" alignment="Qt::AlignHCenter">
+        <widget class="QCheckBox" name="graph_pdf_check">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Network Graph Generated</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="3" colspan="2">
+        <widget class="QPushButton" name="pushButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Show Topology Network</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="3">
+        <widget class="QPushButton" name="show_net_button">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Show Network</string>
          </property>
         </widget>
        </item>

@@ -20,6 +20,7 @@ HEADERS += \
     dialog.h \
     experimentswindow.h \
     graph.h \
+    graphviz.h \
     mainwindow.h \
     path.h \
     pathwindow.h \
@@ -38,3 +39,8 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    icon_resources.qrc
+
+RC_ICONS = network_icon.ico

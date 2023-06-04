@@ -6,6 +6,7 @@
 #include "dialog.h"
 #include "pathwindow.h"
 #include "experimentswindow.h"
+#include "graphviz.h"
 #include "source.cpp"
 #include <thread>
 #include <QIntValidator>
@@ -145,8 +146,8 @@ void MainWindow::on_apply_button_clicked()
 void MainWindow::on_graph_pdf_button_clicked()
 {
     auto start3 = std::chrono::high_resolution_clock::now();
-    generateFile(net, "graph");
-    generateImage("graph");
+    graphviz::generateFile(net, "graph");
+    graphviz::generateImage("graph");
     auto stop3 = std::chrono::high_resolution_clock::now();
     auto duration3 = std::chrono::duration_cast<std::chrono::microseconds>(stop3 - start3);
     std::cout << "\n"<< duration3.count() << std::endl;
@@ -161,8 +162,8 @@ void MainWindow::on_graph_pdf_button_clicked()
 void MainWindow::on_xtc_pdf_button_clicked()
 {
     auto start2 = std::chrono::high_resolution_clock::now();
-    generateFile(xtc_net, "graph_xtc");
-    generateImage("graph_xtc");
+    graphviz::generateFile(xtc_net, "graph_xtc");
+    graphviz::generateImage("graph_xtc");
     auto stop2 = std::chrono::high_resolution_clock::now();
     auto duration2 = std::chrono::duration_cast<std::chrono::microseconds>(stop2 - start2);
     std::cout << "\n" << duration2.count()<< std::endl;
@@ -177,20 +178,20 @@ void MainWindow::on_xtc_pdf_button_clicked()
 
 void MainWindow::on_open_graph_button_clicked()
 {
-    openImage("graph.pdf");
+   graphviz::openImage("graph.pdf");
 }
 
 
 
 void MainWindow::on_open_xtc_button_clicked()
 {
-    openImage("graph_xtc.pdf");
+    graphviz::openImage("graph_xtc.pdf");
 }
 
 
 void MainWindow::on_open_path_window_clicked()
 {
-    PathWindow *pathwindow = new PathWindow(this,&net,&xtc_net);
+    PathWindow *pathwindow = new PathWindow(this,&net,&xtc_net,0,routerSize);
     pathwindow->setModal(true);
     pathwindow->exec();
 }

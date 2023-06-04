@@ -8,106 +8,10 @@
 #include <fstream>
 #include "udg_generation.h"
 #include "topology_control.h"
-
-#ifdef _WIN32
-#include <windows.h>
-#elif __linux__
-#include <cstdlib>
-#elif __APPLE__
-#include <cstdlib>
-#endif
+#include "graphviz.h"
 
 
-void generateFile(graph<router> &g, std::string fileName)
-{
-    std::ofstream file;
-    file.open(fileName + ".dot");
 
-    file << "strict graph G {\n";
-    for (auto vertex = g.begin(); vertex != g.end(); ++vertex)
-    {
-        file << "\t" << vertex->value.name << "\t[pos = \""
-             << vertex->value.location.getX() << "," << vertex->value.location.getY() << "!\"]\n";
-
-        file << "\t" << vertex->value.name << " -- {";
-        for (auto neighbor = vertex->adj_vertices.begin(); neighbor != vertex->adj_vertices.end(); ++neighbor)
-            file << g[*neighbor]->value.name << " ";
-
-        file << "}\n";
-    }
-    file << "}\n";
-
-    file.close();
-}
-
-
-void generateImage(std::string fileName)
-{
-    std::string a = "dot -Kfdp -n -Tpdf -o" + fileName + ".pdf " + fileName + ".dot";
-    const char *command = a.c_str();
-
-#ifdef _WIN32
-    // Windows-specific code
-    system(command);
-#elif __linux__
-    // Linux-specific code
-    system(command);
-#elif __APPLE__
-    // macOS-specific code
-    system(command);
-#else
-#error Unsupported operating system
-#endif
-}
-
-
-void openImage(std::string fileName){
-
-#ifdef _WIN32
-    // Windows-specific code
-    std::string a = "start " + fileName;
-    const char *command = a.c_str();
-    system(command);
-#elif __linux__
-    std::string a = "gio open " + fileName;
-    const char *command = a.c_str();
-    system(command);
-#elif __APPLE__
-    // macOS-specific code
-    system(command);
-#else
-#error Unsupported operating system
-#endif
-}
-
-
-void generateFile_highlight(graph<router> &g, std::string fileName, std::vector<node<router>> &v)
-{
-    std::ofstream file;
-    file.open(fileName + ".dot");
-
-    file << "strict graph G {\n";
-    for (auto vertex = g.begin(); vertex != g.end(); ++vertex)
-    {
-        file << "\t" << vertex->value.name << "\t[";
-
-        if (find(v.begin(), v.end(), *vertex) != v.end())
-        {
-            file << "color = red";
-        }
-
-        file << " pos = \"" << vertex->value.location.getX() << "," << vertex->value.location.getY() << "!\"]\n";
-
-        file << "\t" << vertex->value.name << " -- {";
-        for (auto neighbor = vertex->adj_vertices.begin(); neighbor != vertex->adj_vertices.end(); ++neighbor)
-            file << g[*neighbor]->value.name << " ";
-
-        file << "}\n";
-    }
-    file << "}\n";
-
-    file.close();
-}
 
 void totalDegree_and_max(graph<router> &g, int &totalDegree, int &maxDegree)
 {
@@ -246,19 +150,19 @@ std::string run_experiments(bool printGraphs)
         std::cout << "\t\tGenerating Graph DOT Files...\n\n";
         for (int i = 0; i < 10; i++)
         {
-            generateFile(networks1[i], "graph_" + std::to_string(networks1[i].vertex_count()));
-            generateFile(networks1_xtc[i], "graph_" + std::to_string(networks1[i].vertex_count()) + "_xtc");
+            graphviz::generateFile(networks1[i], "graph_" + std::to_string(networks1[i].vertex_count()));
+            graphviz::generateFile(networks1_xtc[i], "graph_" + std::to_string(networks1[i].vertex_count()) + "_xtc");
         }
 
         std::cout << "\t\tGenerating Graph PDF...\n\n";
         for (int i = 0; i < 10; i++)
         {
-            generateImage("graph_" + std::to_string(networks1[i].vertex_count()));
-            generateImage("graph_" + std::to_string(networks1[i].vertex_count()) + "_xtc");
+            graphviz::generateImage("graph_" + std::to_string(networks1[i].vertex_count()));
+            graphviz::generateImage("graph_" + std::to_string(networks1[i].vertex_count()) + "_xtc");
         }
 
-        generateImage("graph_1000");
-        generateImage("graph_1000_xtc");
+        graphviz::generateImage("graph_1000");
+        graphviz::generateImage("graph_1000_xtc");
     }
 
     return output;
