@@ -77,12 +77,14 @@ void PathWindow::on_FindPath_button_clicked()
     }
 }
 
-
+bool only = true;
 void PathWindow::on_generate_path_graph_button_clicked()
 {
-    bool only = ui->only_radio->isChecked() ? true: false;
+    only = ui->only_radio->isChecked() ? true: false;
     graphviz::generateFile_highlight(*selected,"path_graph",path_vec, only);
-    graphviz::generateImage("path_graph");
+    if(only)
+        graphviz::generateImage("path_graph");
+    else graphviz::generateImage("path_graph_only");
     ui->path_check->setEnabled(true);
     ui->path_check->setCheckState(Qt::Checked);
     ui->path_check->setEnabled(false);
@@ -92,6 +94,9 @@ void PathWindow::on_generate_path_graph_button_clicked()
 
 void PathWindow::on_show_button_clicked()
 {
-    graphviz::openImage("path_graph.pdf");
+    if(only)
+        graphviz::openImage("path_graph.pdf");
+    else graphviz::openImage("path_graph_only.pdf");
 }
+
 
