@@ -1,14 +1,26 @@
 
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include "source.cpp"
+
+
 #include "dialog.h"
+#include "pathwindow.h"
+#include "experimentswindow.h"
+#include "source.cpp"
+#include <thread>
+#include <QIntValidator>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->routerInput->setValidator( new QIntValidator(1, 10000, this) );
+    ui->gridInput->setValidator( new QIntValidator(1, 10000, this) );
+    ui->rangeInput->setValidator( new QIntValidator(1, 10000, this) );
+    ui->errorLabel->setStyleSheet("QLabel {color : red;}");
+    ui->errorLabel->hide();
+    srand(std::time(0));
 }
 
 MainWindow::~MainWindow()
@@ -19,7 +31,7 @@ MainWindow::~MainWindow()
 
 
 
-int routerSize, gridSize;
+int routerSize =0, gridSize =0, range =0;
 udg_generation grid;
 topologyControl tc;
 graph<router>net(false);
@@ -30,41 +42,64 @@ std::string xtc_graph_data;
 
 void MainWindow::on_generateButton_clicked()
 {
-    routerSize = ui->routerInput->text().toInt();
-    gridSize = ui->gridInput->text().toInt();
-    ui->routerOutput->setText(QString::number(routerSize));
-    ui->gridOutput->setText(QString::number(gridSize));
+    if(ui->routerInput->text().toInt() != routerSize || ui->gridInput->text().toInt() != gridSize || ui->rangeInput->text().toInt() != range){
+        ui->errorLabel->setText("");
+        ui->errorLabel->hide();
 
-    net = grid.generate(routerSize, gridSize);
+        routerSize = ui->routerInput->text().toInt();
+        gridSize = ui->gridInput->text().toInt();
+        range = ui->rangeInput->text().toInt();
+
+        ui->routerOutput->setEnabled(true);
+        ui->routerOutput->setText(QString::number(routerSize));
+        ui->routerOutput->setEnabled(false);
+
+        ui->gridOutput->setEnabled(true);
+        ui->gridOutput->setText(QString::number(gridSize));
+        ui->gridOutput->setEnabled(false);
+
+        ui->rangeOutput->setEnabled(true);
+        ui->rangeOutput->setText(QString::number(range));
+        ui->rangeOutput->setEnabled(false);
+
+        //std::thread thread_obj(generate, routerSize, gridSize,range);
+        net = grid.generate(routerSize, gridSize,range);
 
     //ui->output_text->setText(QString::fromStdString(output));
-    ui->udg_check->setEnabled(true);
-    ui->udg_check->setCheckable(true);
-    ui->udg_check->setCheckState(Qt::Checked);
-    ui->udg_check->setEnabled(false);
-    ui->apply_button->setEnabled(true);
-    ui->show_net_button->setEnabled(true);
-    ui->graph_pdf_button->setEnabled(true);
 
-    ui->top_check->setEnabled(true);
-    ui->top_check->setCheckState(Qt::Unchecked);
-    ui->top_check->setEnabled(false);
+        ui->udg_check->setEnabled(true);
+        ui->udg_check->setCheckable(true);
+        ui->udg_check->setCheckState(Qt::Checked);
+        ui->udg_check->setEnabled(false);
+        ui->apply_button->setEnabled(true);
+        ui->show_net_button->setEnabled(true);
+        ui->graph_pdf_button->setEnabled(true);
 
-    ui->pushButton->setEnabled(false);
+        ui->top_check->setEnabled(true);
+        ui->top_check->setCheckState(Qt::Unchecked);
+        ui->top_check->setEnabled(false);
 
-    ui->graph_pdf_check->setEnabled(true);
-    ui->graph_pdf_check->setCheckState(Qt::Unchecked);
-    ui->graph_pdf_check->setEnabled(false);
+        ui->pushButton->setEnabled(false);
 
-    ui->xtc_pdf_button->setEnabled(false);
+        ui->graph_pdf_check->setEnabled(true);
+        ui->graph_pdf_check->setCheckState(Qt::Unchecked);
+        ui->graph_pdf_check->setEnabled(false);
 
-    ui->XTC_pdf_check->setEnabled(true);
-    ui->XTC_pdf_check->setCheckState(Qt::Unchecked);
-    ui->XTC_pdf_check->setEnabled(false);
+        ui->xtc_pdf_button->setEnabled(false);
 
-    ui->open_graph_button->setEnabled(false);
+        ui->XTC_pdf_check->setEnabled(true);
+        ui->XTC_pdf_check->setCheckState(Qt::Unchecked);
+        ui->XTC_pdf_check->setEnabled(false);
 
-    ui->open_xtc_button->setEnabled(false);
+        ui->open_graph_button->setEnabled(false);
+
+        ui->open_xtc_button->setEnabled(false);
+
+        ui->open_path_window->setEnabled(false);
+    }else if(ui->routerInput->text().toInt() == 0 || ui->gridInput->text().toInt() == 0 || ui->rangeInput->text().toInt() == 0){
+        ui->errorLabel->setText("Invalid Input!");
+        ui->errorLabel->show();
+    }
 }
 
 
@@ -101,6 +136,8 @@ void MainWindow::on_apply_button_clicked()
 
     ui->pushButton->setEnabled(true);
     ui->xtc_pdf_button->setEnabled(true);
+
+    ui->open_path_window->setEnabled(true);
 }
 
 
@@ -148,5 +185,23 @@ void MainWindow::on_open_graph_button_clicked()
 void MainWindow::on_open_xtc_button_clicked()
 {
     openImage("graph_xtc.pdf");
+}
+
+
+void MainWindow::on_open_path_window_clicked()
+{
+    PathWindow *pathwindow = new PathWindow(this,&net,&xtc_net);
+    pathwindow->setModal(true);
+    pathwindow->exec();
+}
+
+
+void MainWindow::on_experiments_button_clicked()
+{
+    std::string output = run_experiments(false);
+    std::cout << "Abdullah Gay" << std::endl;
+    ExperimentsWindow *experiments_window = new ExperimentsWindow(this, QString::fromStdString(output));
+    experiments_window->setModal(true);
+    experiments_window->exec();
 }
 

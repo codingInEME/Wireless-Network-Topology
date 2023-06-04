@@ -34,6 +34,10 @@ private slots:
 
     void on_open_xtc_button_clicked();
 
+    void on_open_path_window_clicked();
+
+    void on_experiments_button_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

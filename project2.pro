@@ -10,19 +10,29 @@ CONFIG += c++17
 
 SOURCES += \
     dialog.cpp \
-    graph.cpp \
+    experimentswindow.cpp \
     main.cpp \
     mainwindow.cpp \
-    point.cpp \
+    pathwindow.cpp \
     source.cpp
 
 HEADERS += \
     dialog.h \
-    mainwindow.h
+    experimentswindow.h \
+    graph.h \
+    mainwindow.h \
+    path.h \
+    pathwindow.h \
+    point.h \
+    router.h \
+    topology_control.h \
+    udg_generation.h
 
 FORMS += \
     dialog.ui \
-    mainwindow.ui
+    experimentswindow.ui \
+    mainwindow.ui \
+    pathwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

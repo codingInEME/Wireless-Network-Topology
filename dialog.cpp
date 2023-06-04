@@ -2,10 +2,10 @@
 #include "ui_dialog.h"
 #include "mainwindow.h"
 
+
 Dialog::Dialog(QWidget *parent, QString message) :
     QDialog(parent),
     ui(new Ui::Dialog)
-    //output(out)
 {
     ui->setupUi(this);
     ui->out_text->setText(message);
