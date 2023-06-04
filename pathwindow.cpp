@@ -83,8 +83,8 @@ void PathWindow::on_generate_path_graph_button_clicked()
     only = ui->only_radio->isChecked() ? true: false;
     graphviz::generateFile_highlight(*selected,"path_graph",path_vec, only);
     if(only)
-        graphviz::generateImage("path_graph");
-    else graphviz::generateImage("path_graph_only");
+        graphviz::generateImage("path_graph_only");
+    else graphviz::generateImage("path_graph");
     ui->path_check->setEnabled(true);
     ui->path_check->setCheckState(Qt::Checked);
     ui->path_check->setEnabled(false);
@@ -95,8 +95,8 @@ void PathWindow::on_generate_path_graph_button_clicked()
 void PathWindow::on_show_button_clicked()
 {
     if(only)
-        graphviz::openImage("path_graph.pdf");
-    else graphviz::openImage("path_graph_only.pdf");
+        graphviz::openImage("path_graph_only.pdf");
+    else graphviz::openImage("path_graph.pdf");
 }
 
 
