@@ -273,6 +273,26 @@ void generateImage(std::string fileName)
 #endif
 }
 
+
+void openImage(std::string fileName){
+
+#ifdef _WIN32
+    // Windows-specific code
+    std::string a = "start " + fileName;
+    const char *command = a.c_str();
+    system(command);
+#elif __linux__
+    std::string a = "gio open " + fileName;
+    const char *command = a.c_str();
+    system(command);
+#elif __APPLE__
+    // macOS-specific code
+    system(command);
+#else
+#error Unsupported operating system
+#endif
+}
+
 //int main()
 //{
 //    udg_generation grid;

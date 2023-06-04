@@ -30,6 +30,10 @@ private slots:
 
     void on_xtc_pdf_button_clicked();
 
+    void on_open_graph_button_clicked();
+
+    void on_open_xtc_button_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

@@ -46,6 +46,25 @@ void MainWindow::on_generateButton_clicked()
     ui->show_net_button->setEnabled(true);
     ui->graph_pdf_button->setEnabled(true);
 
+    ui->top_check->setEnabled(true);
+    ui->top_check->setCheckState(Qt::Unchecked);
+    ui->top_check->setEnabled(false);
+
+    ui->pushButton->setEnabled(false);
+
+    ui->graph_pdf_check->setEnabled(true);
+    ui->graph_pdf_check->setCheckState(Qt::Unchecked);
+    ui->graph_pdf_check->setEnabled(false);
+
+    ui->xtc_pdf_button->setEnabled(false);
+
+    ui->XTC_pdf_check->setEnabled(true);
+    ui->XTC_pdf_check->setCheckState(Qt::Unchecked);
+    ui->XTC_pdf_check->setEnabled(false);
+
+    ui->open_graph_button->setEnabled(false);
+
+    ui->open_xtc_button->setEnabled(false);
 }
 
 
@@ -97,6 +116,8 @@ void MainWindow::on_graph_pdf_button_clicked()
     ui->graph_pdf_check->setEnabled(true);
     ui->graph_pdf_check->setCheckState(Qt::Checked);
     ui->graph_pdf_check->setEnabled(false);
+
+    ui->open_graph_button->setEnabled(true);
 }
 
 
@@ -111,5 +132,21 @@ void MainWindow::on_xtc_pdf_button_clicked()
     ui->XTC_pdf_check->setEnabled(true);
     ui->XTC_pdf_check->setCheckState(Qt::Checked);
     ui->XTC_pdf_check->setEnabled(false);
+
+    ui->open_xtc_button->setEnabled(true);
+
+}
+
+
+void MainWindow::on_open_graph_button_clicked()
+{
+    openImage("graph.pdf");
+}
+
+
+
+void MainWindow::on_open_xtc_button_clicked()
+{
+    openImage("graph_xtc.pdf");
 }
 
