@@ -106,6 +106,14 @@ public:
         }
         return gen_path_vector(g, path, visited);
     }
+
+    double static path_distance(std::vector<node<router>> path_vec){
+        double total_distance = 0;
+        for(int i = 0 ; i < path_vec.size()-1; i++){
+            total_distance += path_vec[i].value.location.distance(path_vec[i+1].value.location);
+        }
+        return total_distance;
+    }
 };
 
 

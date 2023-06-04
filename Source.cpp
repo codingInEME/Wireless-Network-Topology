@@ -110,11 +110,14 @@ std::string run_experiments(bool printGraphs)
         auto p = pObj.find_path(network2, randVertices[i].source, randVertices[i].dest);
 
 
-         output += path::display_path(p);
+        output += path::display_path(p);
         if (p.size() == 0)
         {
             output += "path does not exist\n";
             std::cout << "path does not exist\n";
+        }else {
+            output += "Distance of path: " + std::to_string(path::path_distance(p)) + "\n\n";
+            std::cout << "Distance of path: " << (path::path_distance(p)) << "\n\n";
         }
 
         std::cout << '\n';
@@ -139,6 +142,9 @@ std::string run_experiments(bool printGraphs)
         if (p.size() == 0){
             output += "path does not exist\n";
             std::cout << "path does not exist\n";
+        }else {
+            output += "Distance of path: " + std::to_string(path::path_distance(p)) + "\n\n";
+            std::cout << "Distance of path: " << (path::path_distance(p)) << "\n\n";
         }
 
         output += '\n';

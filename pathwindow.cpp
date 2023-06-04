@@ -64,6 +64,8 @@ void PathWindow::on_FindPath_button_clicked()
             } else{
                 ui->output_text->setText(QString::fromStdString(path_out));
                 ui->generate_path_graph_button->setEnabled(true);
+                std::string distance = std::to_string(path::path_distance(path_vec));
+                ui->distanceOuput->setText(QString::fromStdString(distance));
 
             }
 
