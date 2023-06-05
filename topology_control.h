@@ -9,23 +9,10 @@
 
 class topologyControl
 {
-private:
-    struct connection
-    {
-        std::vector<node<router>>::iterator vertex;
-        int neighborID;
-
-        connection(std::vector<node<router>>::iterator vertex, int neighborID)
-        {
-            this->vertex = vertex;
-            this->neighborID = neighborID;
-        }
-    };
-
 public:
-    graph<router> XTC_protocol(graph<router> g)
+    graph<router> XTC_protocol(graph<router> &g)
     {
-        std::list<connection> marked_for_delete;
+        graph<router> h = g;
 
         auto start1 = std::chrono::high_resolution_clock::now();
 
@@ -38,16 +25,10 @@ public:
                     if (vertex->value.location.distance((g[*nextNeighbor]->value.location)) < vertex->value.location.distance((g[*neighbor]->value.location)) &&
                         (g[*nextNeighbor]->value.location.distance(g[*neighbor]->value.location) < vertex->value.location.distance(g[*neighbor]->value.location)))
                     {
-                        connection c(g[vertex - g.begin()], *neighbor);
-                        marked_for_delete.push_back(c);
+                        h.delete_edge(vertex - g.begin(), *neighbor);
                     }
                 }
             }
-        }
-
-        for (auto iter = marked_for_delete.begin(); iter != marked_for_delete.end(); ++iter)
-        {
-            g.delete_edge(iter->vertex - g.begin(), iter->neighborID);
         }
 
         auto stop1 = std::chrono::high_resolution_clock::now();
@@ -56,7 +37,7 @@ public:
         std::cout << "\n"
                   << duration1.count() << std::endl;
 
-        return g;
+        return h;
     }
 };
 

@@ -71,7 +71,6 @@ public:
 
         path.push(current_node);
         std::vector<int> visited;
-        bool found = false;
         while (true)
         {
             while (!path.empty() && isVisited(path.top() - g.begin(), visited)) // removing all visited nodes from stack
@@ -84,10 +83,7 @@ public:
             visited.push_back(curr - g.begin());
 
             if (visited[visited.size() - 1] == destination)
-            {
-                found = true;
                 break;
-            }
 
             curr->adj_vertices.sort([&](int &n1, int &n2)
                                     {
