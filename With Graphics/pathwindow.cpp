@@ -1,6 +1,8 @@
 #include "pathwindow.h"
 #include "ui_pathwindow.h"
 
+#include <qvalidator.h>
+
 #include "path.h"
 #include "graphviz.h"
 
@@ -13,6 +15,10 @@ PathWindow::PathWindow(QWidget *parent, graph<router> *net, graph<router> *xtc, 
     upper(upper)
 {
     ui->setupUi(this);
+
+    ui->source_name->setValidator( new QIntValidator(lower, upper, this) );
+    ui->destination_name->setValidator( new QIntValidator(lower, upper, this) );
+
     ui->errorLabel->setStyleSheet("QLabel {color : red;}");
     ui->errorLabel->hide();
 }
@@ -27,6 +33,8 @@ std::string destination = "";
 graph<router> *selected;
 std::vector<node<router>> path_vec;
 bool with = true;
+bool only = false;;
+bool graph_gen = false;
 
 void PathWindow::on_FindPath_button_clicked()
 {
@@ -36,6 +44,9 @@ void PathWindow::on_FindPath_button_clicked()
         destination = ui->destination_name->text().toStdString();
         if(ui->source_name->text().toInt() > lower  && ui->source_name->text().toInt() <= upper && ui->destination_name->text().toInt() > lower  && ui->destination_name->text().toInt() <= upper)
         {
+            only = NULL;
+            graph_gen = false;
+
             ui->errorLabel->hide();
             ui->generate_path_graph_button->setEnabled(false);
 
@@ -77,7 +88,7 @@ void PathWindow::on_FindPath_button_clicked()
     }
 }
 
-bool only = true;
+
 void PathWindow::on_generate_path_graph_button_clicked()
 {
     only = ui->only_radio->isChecked() ? true: false;
@@ -85,10 +96,13 @@ void PathWindow::on_generate_path_graph_button_clicked()
     if(only)
         graphviz::generateImage("path_graph_only");
     else graphviz::generateImage("path_graph");
+
     ui->path_check->setEnabled(true);
     ui->path_check->setCheckState(Qt::Checked);
     ui->path_check->setEnabled(false);
     ui->show_button->setEnabled(true);
+
+    graph_gen = true;
 }
 
 
@@ -99,4 +113,32 @@ void PathWindow::on_show_button_clicked()
     else graphviz::openImage("path_graph.pdf");
 }
 
+
+
+void PathWindow::on_complete_radio_clicked()
+{
+    if(only != ui->only_radio->isChecked() || !graph_gen){
+        ui->path_check->setEnabled(true);
+        ui->path_check->setCheckState(Qt::Unchecked);
+        ui->path_check->setEnabled(false);
+    }else {
+        ui->path_check->setEnabled(true);
+        ui->path_check->setCheckState(Qt::Checked);
+        ui->path_check->setEnabled(false);
+    }
+}
+
+
+void PathWindow::on_only_radio_clicked()
+{
+    if(only != ui->only_radio->isChecked() || !graph_gen){
+        ui->path_check->setEnabled(true);
+        ui->path_check->setCheckState(Qt::Unchecked);
+        ui->path_check->setEnabled(false);
+    }else {
+        ui->path_check->setEnabled(true);
+        ui->path_check->setCheckState(Qt::Checked);
+        ui->path_check->setEnabled(false);
+    }
+}
 

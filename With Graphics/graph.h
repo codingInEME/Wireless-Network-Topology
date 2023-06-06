@@ -1,3 +1,6 @@
+#ifndef GRAPH_H
+#define GRAPH_H
+
 
 #include <iostream>
 #include <list>
@@ -11,7 +14,6 @@
 #include <cmath>
 
 //using namespace std;
-
 template <class T>
 struct node
 {
@@ -167,17 +169,15 @@ public:
         for (auto vertex : vertices)
         {
             output += (vertex.value.name) + " : (" + std::to_string(vertex.value.location.getX()) + ", " + std::to_string(vertex.value.location.getY()) + ")";
-            std::cout << vertex.value << " : (" << vertex.value.location.getX() << ", " << vertex.value.location.getY() << ")";
             output += " : { ";
-            std::cout << " : { ";
             for (auto adjacent_vertex : vertex.adj_vertices)
             {
                 output += (vertices[adjacent_vertex].value.name) + ' ';
-                std::cout << vertices[adjacent_vertex].value << ' ';
             }
             output += "}\n";
-            std::cout << "}\n";
         }
+
+        std::cout << output;
         return output;
     }
 
@@ -229,3 +229,5 @@ public:
         return find_vertex_by_index(index);
     }
 };
+
+#endif // GRAPH_H

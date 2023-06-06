@@ -26,6 +26,10 @@ private slots:
 
     void on_show_button_clicked();
 
+    void on_complete_radio_clicked();
+
+    void on_only_radio_clicked();
+
 private:
     Ui::PathWindow *ui;
     graph<router> *net;

@@ -1,3 +1,6 @@
+#ifndef POINT_H
+#define POINT_H
+
 
 #include <cmath>
 
@@ -91,3 +94,6 @@ public:
         return !isEqualTo(p);
     }
 };
+
+
+#endif // POINT_H
